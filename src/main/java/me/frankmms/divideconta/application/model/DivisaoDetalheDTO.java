@@ -16,5 +16,4 @@ public class DivisaoDetalheDTO {
     private BigDecimal descontos;
     private BigDecimal acrescimos;
     private BigDecimal valorAPagar;
-    private String codigoPagamento;
 }
