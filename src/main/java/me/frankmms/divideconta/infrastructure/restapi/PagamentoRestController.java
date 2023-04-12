@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @Tag(name = "pagamentos")
 @RestController
 @RequestMapping("/pagamentos")
@@ -20,7 +22,7 @@ public class PagamentoRestController {
     PagamentoAppService service;
 
     @PostMapping("gerar-cobranca")
-    public ResponseEntity<CobrancaDTO>  gerarCobranca(@RequestBody GerarCobrancaDTO solicitacao) {
+    public ResponseEntity<CobrancaDTO>  gerarCobranca(@RequestBody @Valid GerarCobrancaDTO solicitacao) {
         var cobrancaDTO = service.gerarCobranca(solicitacao);
 
         return ResponseEntity.ok(cobrancaDTO);

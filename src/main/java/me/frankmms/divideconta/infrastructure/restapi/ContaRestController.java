@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @Tag(name = "contas")
 @RestController
 @RequestMapping("/contas")
@@ -20,7 +22,7 @@ public class ContaRestController {
     ContaAppService service;
 
     @PostMapping("dividir")
-    public ResponseEntity<DivisaoDTO>  calcularDivisao(@RequestBody ContaDTO contaDTO) {
+    public ResponseEntity<DivisaoDTO>  calcularDivisao(@Valid @RequestBody ContaDTO contaDTO) {
         var result = service.calcularDivisao(contaDTO);
 
         return ResponseEntity.ok(result);

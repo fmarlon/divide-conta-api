@@ -6,6 +6,7 @@ import me.frankmms.divideconta.domain.model.Cobranca;
 import me.frankmms.divideconta.domain.model.Dinheiro;
 import me.frankmms.divideconta.domain.model.FormaPagamento;
 
+import javax.validation.ValidationException;
 import java.util.List;
 
 public class PagamentoAppService {
@@ -18,12 +19,16 @@ public class PagamentoAppService {
         if (solicitacao.getFormaPagamento() == null) {
             solicitacao.setFormaPagamento(FormaPagamento.MERCADO_PAGO);
         }
+        try {
+            var cobranca = new Cobranca(solicitacao.getFormaPagamento(), null, Dinheiro.of(solicitacao.getValor()));
 
-        var cobranca = new Cobranca(solicitacao.getFormaPagamento(), null, Dinheiro.of(solicitacao.getValor()));
+            cobranca.gerarDadosParaPagamento();
 
-        cobranca.gerarDadosParaPagamento();
+            return new CobrancaDTO(solicitacao.getFormaPagamento(), solicitacao.getValor(), cobranca.getDadosParaPagamento());
+        } catch(IllegalArgumentException e) {
+            throw new ValidationException(e.getMessage());
+        }
 
-        return new CobrancaDTO(solicitacao.getFormaPagamento(), solicitacao.getValor(), cobranca.getDadosParaPagamento());
     }
 
 }

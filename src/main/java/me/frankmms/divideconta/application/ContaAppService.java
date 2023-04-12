@@ -6,10 +6,17 @@ import me.frankmms.divideconta.application.model.ContaDTO;
 import me.frankmms.divideconta.domain.model.Conta;
 import me.frankmms.divideconta.domain.model.Participante;
 import me.frankmms.divideconta.domain.model.Transacao;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.validation.ValidationException;
+
+import static org.apache.commons.lang3.StringUtils.defaultString;
 
 public class ContaAppService {
 
     public DivisaoDTO calcularDivisao(ContaDTO contaDTO) {
+        validarConta(contaDTO);
+
         Conta conta = criarConta(contaDTO);
 
         conta.calcularDivisao();
@@ -17,6 +24,12 @@ public class ContaAppService {
         DivisaoDTO divisaoDTO = preencherDivisaoDTO(conta);
 
         return divisaoDTO;
+    }
+
+    private void validarConta(ContaDTO contaDTO) {
+        if (contaDTO.getItens() == null || contaDTO.getItens().isEmpty()) {
+            throw new ValidationException("Itens devem ser informados");
+        }
     }
 
     private DivisaoDTO preencherDivisaoDTO(Conta conta) {
@@ -46,14 +59,27 @@ public class ContaAppService {
         var conta = new Conta();
 
         contaDTO.getItens().forEach(it -> {
-            conta.addItem(it.getDescricao(), it.getValor().doubleValue(), Participante.of(it.getSolicitante()));
+            if (it.getValor() == null) {
+                throw new ValidationException("Valor do item '" + defaultString(it.getDescricao()) + "' não informado");
+            }
+            conta.addItem(it.getDescricao(), it.getValor().doubleValue(), Participante.of(it.getParticipante()));
         });
-        contaDTO.getAcrescimos().forEach(it -> {
-            conta.addAcrescimo(new Transacao(it.getDescricao(), it.getTipoValor(), it.getValor()));
-        });
-        contaDTO.getDescontos().forEach(it -> {
-            conta.addDesconto(new Transacao(it.getDescricao(), it.getTipoValor(), it.getValor()));
-        });
+        if (contaDTO.getAcrescimos() != null) {
+            contaDTO.getAcrescimos().forEach(it -> {
+                if (it.getValor() == null) {
+                    throw new ValidationException("Valor do acrescimo '" + defaultString(it.getDescricao()) + "' não informado");
+                }
+                conta.addAcrescimo(new Transacao(it.getDescricao(), it.getTipoValor(), it.getValor()));
+            });
+        }
+        if (contaDTO.getDescontos() != null) {
+            contaDTO.getDescontos().forEach(it -> {
+                if (it.getValor() == null) {
+                    throw new ValidationException("Valor do desconto '" + defaultString(it.getDescricao()) + "' não informado");
+                }
+                conta.addDesconto(new Transacao(it.getDescricao(), it.getTipoValor(), it.getValor()));
+            });
+        }
         return conta;
     }
 

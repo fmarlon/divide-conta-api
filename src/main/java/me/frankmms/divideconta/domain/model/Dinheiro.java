@@ -1,5 +1,8 @@
 package me.frankmms.divideconta.domain.model;
 
+import org.apache.commons.lang3.Validate;
+
+import javax.validation.ValidationException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Collection;
@@ -16,6 +19,9 @@ public class Dinheiro extends Number {
     public static Dinheiro ZERO = new Dinheiro(BigDecimal.ZERO);
 
     private Dinheiro(BigDecimal valor) {
+        if (valor == null) {
+            throw new IllegalArgumentException("Valor deve ser informado");
+        }
         this.valor = valor;
     }
 

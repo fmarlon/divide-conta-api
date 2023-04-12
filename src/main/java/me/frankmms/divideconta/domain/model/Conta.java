@@ -1,5 +1,8 @@
 package me.frankmms.divideconta.domain.model;
 
+import me.frankmms.divideconta.domain.DomainException;
+
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -49,6 +52,10 @@ public class Conta {
         totalItens = Dinheiro.sum(itens, Item::getValor);
         totalAcrescimos = Dinheiro.sum(acrescimos, it -> it.getValorReal(totalItens));
         totalDescontos = Dinheiro.sum(descontos, it -> it.getValorReal(totalItens));
+
+        if (totalItens.equals(Dinheiro.ZERO)) {
+            throw new DomainException("Total dos itens deve ser maior que zero");
+        }
 
         this.totalAPagar = totalItens.subtract(totalDescontos).add(totalAcrescimos);
 
