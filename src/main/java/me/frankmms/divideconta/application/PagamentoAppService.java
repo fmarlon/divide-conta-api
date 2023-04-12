@@ -15,6 +15,10 @@ public class PagamentoAppService {
     }
 
     public CobrancaDTO gerarCobranca(GerarCobrancaDTO solicitacao) {
+        if (solicitacao.getFormaPagamento() == null) {
+            solicitacao.setFormaPagamento(FormaPagamento.MERCADO_PAGO);
+        }
+
         var cobranca = new Cobranca(solicitacao.getFormaPagamento(), null, Dinheiro.of(solicitacao.getValor()));
 
         cobranca.gerarDadosParaPagamento();

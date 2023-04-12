@@ -43,9 +43,8 @@ public class GeradorPix implements GeradorDadosPagamento {
 
             return Map.of(
                     "TIPO_CHAVE", config.getTipoChave(),
-                    "CHAVE", config.getChave(),
-                    "CODIGO_COPIA_COLA", codigoCopiaCola,
-                    "QRCODE", generateQRCode(codigoCopiaCola)
+                    "CHAVE_PIX", config.getChave(),
+                    "PIX_COPIA_COLA", codigoCopiaCola
             );
         } catch (InvalidValueFormatException e) {
             throw new IllegalStateException("Não foi possível gerar o código PIX", e);
